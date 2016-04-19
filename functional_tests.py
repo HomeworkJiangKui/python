@@ -35,11 +35,15 @@ class NewVisitorTest(unittest.TestCase):
 		#待办事项表格中显示了“1：Buy peacock feathers”
 		inputbox.send_keys(Keys.ENTER)
 		
+		#import time
+		#time.sleep(10)
 		table = self.browser.find_element_by_id('id_list_table')
 		rows = table.find_elements_by_tag_name('tr')
 		self.assertTrue(
 			any(row.text == '1:Buy peacock feathers' for row in rows),
-		"New to-do item did not appear in table"
+			"New to-do item did not appear in table -- its text was:\n%s" %(
+				table.text,
+			)
 		)
 
 		#页面中有显示了一个文本框，可以输入其他的待办事项
