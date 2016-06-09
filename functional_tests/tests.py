@@ -7,7 +7,7 @@ class NewVisitorTest(LiveServerTestCase):
 
 	def setUp(self):
 		self.browser = webdriver.Firefox()
-		self.browser.implicitly_wait(3)
+		self.browser.implicitly_wait(1)
 
 	def tearDown(self):
 		self.browser.quit()
@@ -43,7 +43,7 @@ class NewVisitorTest(LiveServerTestCase):
 		inputbox.send_keys(Keys.ENTER)
 		edith_list_url = self.browser.current_url
 		self.assertRegex(edith_list_url,'/lists/.+')	
-		self.check_for_row_in_list_table('1:Buypeacock feathers')
+		self.check_for_row_in_list_table('1:Buy peacock feathers')
 		
 		#页面中有显示了一个文本框，可以输入其他的待办事项
 		#她输入了‘Use peacork feathers to make a fly“（使用孔雀羽毛做家蝇）
@@ -55,9 +55,9 @@ class NewVisitorTest(LiveServerTestCase):
 		#import time
 		#time.sleep(2)
 		#页面再次更新，她的清单中显示了这两个待办事项
-		self.check_for_row_in_list_table('1:Buy peacock feathers')
-		self.check_for_row_in_list_table('2:Use peacock feathers to make a fly')
 		
+		self.check_for_row_in_list_table('2:Use peacock feathers to make a fly')
+		self.check_for_row_in_list_table('1:Buy peacock feathers')
 
 		#伊利斯想知道这个网站是否会记住她的清单
 		#她看到网站为她生成了一个唯一的URL
@@ -77,7 +77,7 @@ class NewVisitorTest(LiveServerTestCase):
 		#弗朗西斯访问首页
 		#页面中看不到伊迪丝的清单
 		self.browser.get(self.live_server_url)
-		page_test = self.browser.find_element_by_tag_name('body').text
+		page_text = self.browser.find_element_by_tag_name('body').text
 		self.assertNotIn('Buy peacock feathers',page_text)
 		
 		#弗朗西斯输入了一个新的待办事项，新建一个清单
