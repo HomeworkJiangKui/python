@@ -37,13 +37,14 @@ class NewVisitorTest(LiveServerTestCase):
 		#她在一个文本框内输入了“Buy peacock feathers”
 		#伊利斯的爱好是使用家蝇做饵钓鱼
 		inputbox.send_keys('Buy peacock feathers')
-
-		#她按回车建后，页面更新了
-		#待办事项表格中显示了“1：Buy peacock feathers”
+		
+		#她按下回车键后，被带到了一个新的URL
+		#这个页面的待办事项清单中显示了‘1：Buy peacock feathers’
 		inputbox.send_keys(Keys.ENTER)
+		edith_list_url = self.browser.current_url
+		self.assertRegex(edith_list_url,'/lists/.+')	
+		self.check_for_row_in_list_table('1:Buypeacock feathers')
 		
-		
-		self.check_for_row_in_list_table('1:Buy peacock feathers')
 		#页面中有显示了一个文本框，可以输入其他的待办事项
 		#她输入了‘Use peacork feathers to make a fly“（使用孔雀羽毛做家蝇）
 		#伊利斯做事很有条理
@@ -58,16 +59,46 @@ class NewVisitorTest(LiveServerTestCase):
 		self.check_for_row_in_list_table('2:Use peacock feathers to make a fly')
 		
 
-#伊利斯想知道这个网站是否会记住她的清单
-#她看到网站为她生成了一个唯一的URL
-#而且页面中有一些文字解说这个功能
-		self.fail('Finish the test!')
-#她访问那个URL，发现她的待办事项列表还在
+		#伊利斯想知道这个网站是否会记住她的清单
+		#她看到网站为她生成了一个唯一的URL
+		#而且页面中有一些文字解说这个功能
+		#self.fail('Finish the test!')
+		#她访问那个URL，发现她的待办事项列表还在
 
-#她很满意，去睡觉了
+		#她很满意，去睡觉了
+
+
+		#现在一个叫做弗朗西斯的新用户访问了网站
+		##我们使用一个新的浏览器会话
+		##确保伊迪丝的信息不会从cookie中泄露出来
+		self.browser.quit()
+		self.browser = webdriver.Firefox()
+		
+		#弗朗西斯访问首页
+		#页面中看不到伊迪丝的清单
+		self.browser.get(self.live_server_url)
+		page_test = self.browser.find_element_by_tag_name('body').text
+		self.assertNotIn('Buy peacock feathers',page_text)
+		
+		#弗朗西斯输入了一个新的待办事项，新建一个清单
+		#他不像伊迪丝那样兴致盎然
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		inputbox.send_keys('Buy milk')
+		inputbox.send_keys(Keys.ENTER)
+
+		#弗朗西斯获得了他唯一的URL
+		francis_list_url = self.browser.current_url
+		self.assertRegex(francis_list_url,'/lists/.+')
+		self.assertNotEqual(francis_list_url,edith_list_url)
+		
+		#这个页面还是没有伊迪丝的清单
+		page_text = self.browser.find_element_by_tag_name('body').text
+		self.assertNotIn('BUy peacock feathers',page_text)
+		
+		#两个人都很满意，去睡觉了
 
 
 
-#if __name__ == '__main__':
-#	unittest.main(warnings='ignore')
+if __name__ == '__main__':
+	unittest.main(warnings='ignore')
 
